@@ -39,8 +39,10 @@
                         <input type="checkBox" id="read" name="read">
                     </div>
                 </div>
+                <!-- submit and cancel button -->
                 <div class="form-actions">
                     <button type="button" class="cancel-btn" onclick="closeBookForm()">Cancel</button>
+                    <button type="submit" class="submit-btn">Add book</button>
                 </div>
             </form>
         </div>
@@ -51,8 +53,44 @@
             document.getElementById('bookDialog').showModal();
         }
 
-        function closeBookForm(){
-            document.getElementById('bookDialog').close(); 
+        function closeBookForm() {
+            document.getElementById('bookDialog').close();
+        }
+
+        document.getElementById('bookForm').addEventListener('submit', function (event) {
+            event.preventDefault(); //Prevent default form submission 
+
+            const formData = new FormData(event.target);//turn form into object with [key,value]
+            const title = formData.get('title').trim();//removes whitespace from both the beginning and end of string
+            const author = formData.get('author').trim(); 
+            const pages = formData.get('pages')? parseInt(formData.get('pages')):null; //make sure value isnt null
+            const read = formData.has('read') //return true if user check box
+            const read2 = formData.get('read') //on if user check box null if user didnt check box
+
+            if (title && author){
+                addBookToLibrary(title, author, pages, read); 
+            }
+        })
+
+        //Book Constructor 
+        function Book(title, author, pages, read){
+            this.id = crypto.randomUUID(); 
+            this.title = title; 
+            this.author = author; 
+            this.pages = pages || 'Not specified'; 
+            this.read = read || false; 
+        }
+
+        const myLibrary = []; 
+
+        function addBookToLibrary(title, author, pages, read){
+            const newBook = newBook(title, author, pages, read);
+            myLibrary.push(newBook); 
+            displayBooks(); 
+        }
+
+        function dispLayBook(){
+            const libraryGrid = document.getElementById('libraryGrid'); 
         }
     </script>
 </body>
