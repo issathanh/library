@@ -11,7 +11,7 @@
     <div class="container">
         <button class="new-book-button" onclick="openBookForm()">Add your book</button>
     </div>
-    <dialog id="book-dialog">
+    <dialog id="bookDialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h1 class="modal-title">Add your book</h1>
@@ -41,9 +41,52 @@
         </div>
     </dialog>
     <script>
-        function openBookForm() {
-            document.getElementById('book-dialog').showModal();
+        const myLibrary = [];
+
+        function Book(title, author, pages, read) {
+            // the constructor...
+            this.title = title;
+            this.author = author; 
+            this.pages = pages; 
+            this.read = read; 
         }
+
+        function addBookToLibrary(title, author, pages, read) {
+            // take params, create a book then store it in the array
+            const book = new Book(title, author, pages,read)
+            myLibrary.push(book); 
+            document.getElementById('bookForm').reset();
+            document.getElementById('bookDialog').close();
+            console.log(`its been added ${myLibrary.length}`)
+
+        }
+        function openBookForm() {
+            document.getElementById('bookDialog').showModal();
+        }
+        function closeForm() {
+            document.getElementById('bookForm').reset();
+            document.getElementById('bookDialog').close();
+        }
+        document.getElementById('bookForm').addEventListener('submit', function (event) {
+            //prevent default behavior 
+            event.preventDefault();
+
+            //create formData object
+            const formData = new FormData(event.target);
+            const title = formData.get('title').trim();
+            const author = formData.get('author').trim();
+            const pages = formData.get('pages') ? parseInt(formData.get('pages')) : null;
+            const read = formData.has('read');
+
+            if (title && author) {
+                addBookToLibrary(title, author, pages, read);
+            }
+
+        })
+        function displayBook(){
+
+        }
+
     </script>
 </body>
 

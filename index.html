@@ -66,9 +66,9 @@
         
 
         document.getElementById('bookForm').addEventListener('submit', function (event) {
-            event.preventDefault(); //Prevent default form submission 
-
-            const formData = new FormData(event.target);//turn form into object with [key,value]
+            event.preventDefault(); //Prevent default behaviour which is submit and reload the page
+            // .get return value .has return true or false
+            const formData = new FormData(event.target);//event.target refer to the element that triggered the event and use new FOormData to create a Form Data object from the form
             const title = formData.get('title').trim();//removes whitespace from both the beginning and end of string
             const author = formData.get('author').trim();
             const pages = formData.get('pages') ? parseInt(formData.get('pages')) : null; //make sure value isnt null
