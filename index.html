@@ -13,8 +13,14 @@
             <!-- create a button that open up a popup form -->
             <button class="new-book-btn" onclick="openBookForm()">Add New Book</button>
         </div>
+        <div class="library-grid" id="libraryGrid">
+            <!-- books will be dynamically inserted here -->
+        </div>
+        <div class="empty-library" id="emptyMessage" style="display: none;">
+            No books in your library yet. Add your first book to get started!               
+        </div>
     </div>
-    <!-- THE POP UP FORM -->
+    <!-- MODAL DIALOG FOR ADDIGN BOOK -->
     <dialog id="bookDialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -80,19 +86,30 @@
             this.pages = pages || 'Not specified'; 
             this.read = read || false; 
         }
-
+        //array of books 
         const myLibrary = []; 
 
+        
         function addBookToLibrary(title, author, pages, read){
-            const newBook = newBook(title, author, pages, read);
+            const newBook = new Book(title, author, pages, read);
             myLibrary.push(newBook); 
-            displayBooks(); 
+            displayBook(); 
         }
-
-        function dispLayBook(){
+//function to display book
+        function displayBook(){
             const libraryGrid = document.getElementById('libraryGrid'); 
+            const emptyMessage = document.getElementById('emptyMessage')
+            
+            libraryGrid.innerHTML=''; 
+            //if the length of the lib is 0 
+            if (myLibrary.length == 0){
+                //set the empty message div.style.display = blocck 
+                emptyMessage.style.display = 'block'; 
+                return; 
+            }
         }
+        displayBook();
     </script>
 </body>
-
+    
 </html>
