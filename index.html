@@ -147,13 +147,14 @@
                 libraryGrid.appendChild(bookCard);
             })
         }
+        //delete book by id 
         function deleteBook(id){
+            //find the id and return the index
             const bookIndex = myLibrary.findIndex(book => book.id==id)
             if(bookIndex!== -1){
                 myLibrary.splice(bookIndex,1);
                 displayBook();
             }
-            
         }
         displayBook();
     </script>
