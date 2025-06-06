@@ -1,0 +1,183 @@
+<body>
+    <div class="container">
+        <h1>📚 My Library</h1>
+        
+        <div class="controls">
+            <button class="new-book-btn" onclick="openBookForm()">+ Add New Book</button>
+        </div>
+
+        <div class="library-grid" id="libraryGrid">
+            <!-- Books will be dynamically inserted here -->
+        </div>
+
+        <div class="empty-library" id="emptyMessage" style="display: none;">
+            No books in your library yet. Add your first book to get started!
+        </div>
+    </div>
+
+    <!-- Modal Dialog for Adding Books -->
+    <dialog id="bookDialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Book</h2>
+            </div>
+            
+            <form id="bookForm">
+                <div class="form-group">
+                    <label for="title">Title*</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="author">Author*</label>
+                    <input type="text" id="author" name="author" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pages">Number of Pages</label>
+                    <input type="number" id="pages" name="pages" min="1" placeholder="e.g. 250">
+                </div>
+                
+                <div class="form-group">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="read" name="read">
+                        <label for="read">I have read this book</label>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="cancel-btn" onclick="closeBookForm()">Cancel</button>
+                    <button type="submit" class="submit-btn">Add Book</button>
+                </div>
+            </form>
+        </div>
+    </dialog>
+
+    <script>
+        // Library array to store all books
+        const myLibrary = [];
+
+        // Book constructor
+        function Book(title, author, pages, read) {
+            this.id = crypto.randomUUID(); // Unique identifier for each book
+            this.title = title;
+            this.author = author;
+            this.pages = pages || 'Not specified';
+            this.read = read || false;
+        }
+
+        // Prototype method to toggle read status
+        Book.prototype.toggleReadStatus = function() {
+            this.read = !this.read;
+        };
+
+        // Function to add book to library
+        function addBookToLibrary(title, author, pages, read) {
+            const newBook = new Book(title, author, pages, read);
+            myLibrary.push(newBook);
+            displayBooks();
+        }
+
+        // Function to display all books
+        function displayBooks() {
+            const libraryGrid = document.getElementById('libraryGrid');
+            const emptyMessage = document.getElementById('emptyMessage');
+            
+            libraryGrid.innerHTML = '';
+            
+            if (myLibrary.length === 0) {
+                emptyMessage.style.display = 'block';
+                return;
+            }
+            
+            emptyMessage.style.display = 'none';
+            
+            myLibrary.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                bookCard.setAttribute('data-book-id', book.id);
+                
+                bookCard.innerHTML = `
+                    <div class="book-title">${book.title}</div>
+                    <div class="book-author">by ${book.author}</div>
+                    <div class="book-pages">${book.pages} pages</div>
+                    <div class="book-status ${book.read ? 'read' : 'not-read'}">
+                        ${book.read ? '✓ Read' : '○ Not Read'}
+                    </div>
+                    <div class="book-actions">
+                        <button class="btn toggle-btn" onclick="toggleReadStatus('${book.id}')">
+                            ${book.read ? 'Mark Unread' : 'Mark Read'}
+                        </button>
+                        <button class="btn remove-btn" onclick="removeBook('${book.id}')">
+                            Remove
+                        </button>
+                    </div>
+                `;
+                
+                libraryGrid.appendChild(bookCard);
+            });
+        }
+
+        // Function to remove book from library
+        function removeBook(bookId) {
+            const bookIndex = myLibrary.findIndex(book => book.id === bookId);
+            if (bookIndex !== -1) {
+                myLibrary.splice(bookIndex, 1);
+                displayBooks();
+            }
+        }
+
+        // Function to toggle read status
+        function toggleReadStatus(bookId) {
+            const book = myLibrary.find(book => book.id === bookId);
+            if (book) {
+                book.toggleReadStatus();
+                displayBooks();
+            }
+        }
+
+        // Modal functions
+        function openBookForm() {
+            document.getElementById('bookDialog').showModal();
+        }
+
+        function closeBookForm() {
+            document.getElementById('bookDialog').close();
+            document.getElementById('bookForm').reset();
+        }
+
+        // Form submission handler
+        document.getElementById('bookForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent default form submission
+            
+            const formData = new FormData(event.target);
+            const title = formData.get('title').trim();
+            const author = formData.get('author').trim();
+            const pages = formData.get('pages') ? parseInt(formData.get('pages')) : null;
+            const read = formData.has('read');
+            
+            if (title && author) {
+                addBookToLibrary(title, author, pages, read);
+                closeBookForm();
+            }
+        });
+
+        // Close modal when clicking outside
+        document.getElementById('bookDialog').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeBookForm();
+            }
+        });
+
+        // Add some sample books to demonstrate the functionality
+        function addSampleBooks() {
+            addBookToLibrary('The Great Gatsby', 'F. Scott Fitzgerald', 180, true);
+            addBookToLibrary('To Kill a Mockingbird', 'Harper Lee', 281, false);
+            addBookToLibrary('1984', 'George Orwell', 328, true);
+            addBookToLibrary('Pride and Prejudice', 'Jane Austen', 432, false);
+        }
+
+        // Initialize the app with sample books
+        addSampleBooks();
+        displayBooks();
+    </script>
