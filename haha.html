@@ -5,7 +5,6 @@
         <div class="controls">
             <button class="new-book-btn" onclick="openBookForm()">+ Add New Book</button>
         </div>
-
         <div class="library-grid" id="libraryGrid">
             <!-- Books will be dynamically inserted here -->
         </div>
@@ -122,9 +121,15 @@
         function removeBook(bookId) {
             const bookIndex = myLibrary.findIndex(book => book.id === bookId);
             if (bookIndex !== -1) {
-                myLibrary.splice(bookIndex, 1);
+                myLibrar
+                y.splice(bookIndex, 1);
                 displayBooks();
             }
+// Goes through each book in myLibrary one by one
+// For each book, 
+// it runs the test: book.id === bookId
+// Returns the index of the first book where the test is true
+// If no match found, returns -1
         }
 
         // Function to toggle read status

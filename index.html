@@ -17,7 +17,7 @@
             <!-- books will be dynamically inserted here -->
         </div>
         <div class="empty-library" id="emptyMessage" style="display: none;">
-            No books in your library yet. Add your first book to get started!               
+            No books in your library yet. Add your first book to get started!
         </div>
     </div>
     <!-- MODAL DIALOG FOR ADDIGN BOOK -->
@@ -61,55 +61,102 @@
 
         function closeBookForm() {
             document.getElementById('bookDialog').close();
+            document.getElementById('bookForm').reset(); 
         }
+        
 
         document.getElementById('bookForm').addEventListener('submit', function (event) {
             event.preventDefault(); //Prevent default form submission 
 
             const formData = new FormData(event.target);//turn form into object with [key,value]
             const title = formData.get('title').trim();//removes whitespace from both the beginning and end of string
-            const author = formData.get('author').trim(); 
-            const pages = formData.get('pages')? parseInt(formData.get('pages')):null; //make sure value isnt null
+            const author = formData.get('author').trim();
+            const pages = formData.get('pages') ? parseInt(formData.get('pages')) : null; //make sure value isnt null
             const read = formData.has('read') //return true if user check box
             const read2 = formData.get('read') //on if user check box null if user didnt check box
 
-            if (title && author){
-                addBookToLibrary(title, author, pages, read); 
+            if (title && author) {
+                addBookToLibrary(title, author, pages, read);
             }
         })
 
         //Book Constructor 
-        function Book(title, author, pages, read){
-            this.id = crypto.randomUUID(); 
-            this.title = title; 
-            this.author = author; 
-            this.pages = pages || 'Not specified'; 
-            this.read = read || false; 
+        function Book(title, author, pages, read) {
+            this.id = crypto.randomUUID();
+            this.title = title;
+            this.author = author;
+            this.pages = pages || 'Not specified';
+            this.read = read || false;
         }
         //array of books 
-        const myLibrary = []; 
+        const myLibrary = [];
 
-        
-        function addBookToLibrary(title, author, pages, read){
+
+        function addBookToLibrary(title, author, pages, read) {
             const newBook = new Book(title, author, pages, read);
-            myLibrary.push(newBook); 
-            displayBook(); 
+            myLibrary.push(newBook);
+            document.getElementById("bookForm").reset()
+            displayBook();
         }
-//function to display book
-        function displayBook(){
-            const libraryGrid = document.getElementById('libraryGrid'); 
-            const emptyMessage = document.getElementById('emptyMessage')
-            
-            libraryGrid.innerHTML=''; 
+        //function to display book
+        function displayBook() {
+            const libraryGrid = document.getElementById('libraryGrid');
+            const emptyMessage = document.getElementById('emptyMessage');
+
+            libraryGrid.innerHTML = '';
             //if the length of the lib is 0 
-            if (myLibrary.length == 0){
+            if (myLibrary.length == 0) {
                 //set the empty message div.style.display = blocck 
-                emptyMessage.style.display = 'block'; 
-                return; 
+                emptyMessage.style.display = 'block';
+                return;
             }
+
+            emptyMessage.style.display = 'none';
+
+            myLibrary.forEach(book => {
+                //create elements
+                const bookCard = document.createElement('div')
+                const title = document.createElement('h3')
+                const author = document.createElement('p')
+                const pages = document.createElement('p')
+                const deleteBtn = document.createElement('button')
+                const read = document.createElement("p")
+                //Add classes  
+                bookCard.className = 'book-card'
+                title.className = 'title'
+                author.className = 'author'
+                pages.className = 'pages'
+                deleteBtn.className = 'deleteBtn'
+
+
+                //Add content
+                title.textContent = book.title
+                author.textContent = `by ${book.author}`;
+                pages.textContent = book.pages + "pages"
+                read.textContent = book.read?'✓ Read' : '○ Not Read'
+                
+                deleteBtn.className = 'delete-btn'
+                deleteBtn.textContent = 'Delete'
+                deleteBtn.onclick = () => deleteBook(book.id)
+                bookCard.appendChild(title)
+                bookCard.appendChild(author)
+                bookCard.appendChild(pages)
+                bookCard.appendChild(read)
+                bookCard.appendChild(deleteBtn)
+                
+                libraryGrid.appendChild(bookCard);
+            })
+        }
+        function deleteBook(id){
+            const bookIndex = myLibrary.findIndex(book => book.id==id)
+            if(bookIndex!== -1){
+                myLibrary.splice(bookIndex,1);
+                displayBook();
+            }
+            
         }
         displayBook();
     </script>
 </body>
-    
+
 </html>
