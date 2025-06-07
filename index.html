@@ -135,7 +135,6 @@
                 pages.textContent = book.pages + "pages"
                 read.textContent = book.read?'✓ Read' : '○ Not Read'
                 
-                deleteBtn.className = 'delete-btn'
                 deleteBtn.textContent = 'Delete'
                 deleteBtn.onclick = () => deleteBook(book.id)
                 bookCard.appendChild(title)
